@@ -4,6 +4,17 @@ public class Person {
     private String name;
     private Integer age;
 
+    private Car car;
+
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
     public String getName() {
         return name;
     }

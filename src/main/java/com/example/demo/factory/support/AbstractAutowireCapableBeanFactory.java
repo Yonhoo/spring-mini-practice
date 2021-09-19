@@ -2,6 +2,7 @@ package com.example.demo.factory.support;
 
 import com.example.demo.exception.BeansException;
 import com.example.demo.factory.config.BeanDefinition;
+import com.example.demo.factory.config.BeanReference;
 import com.example.demo.factory.config.InstantiationStrategy;
 import cn.hutool.core.bean.BeanUtil;
 import java.util.Arrays;
@@ -35,9 +36,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         try {
             Arrays.stream(bean.getClass().getDeclaredFields())
                     .forEach(item -> {
-                        BeanUtil.setFieldValue(bean, item.getName(),
-                                beanDefinition.getPropertyValues()
-                                        .getPropertyValue(item.getName()));
+
+                        Object value = beanDefinition.getPropertyValues()
+                                .getPropertyValue(item.getName());
+
+                        if (value instanceof BeanReference){
+                            value = getBean(((BeanReference) value).getBeanName());
+                        }
+                        BeanUtil.setFieldValue(bean, item.getName(), value);
                     });
         } catch (Exception e) {
             throw new BeansException("Error setting property values for bean: " + beanName, e);
