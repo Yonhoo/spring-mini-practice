@@ -1,10 +1,16 @@
 package com.example.demo;
 
+import cn.hutool.core.io.IoUtil;
+import com.example.demo.core.io.DefaultResourceLoader;
+import com.example.demo.core.io.FileSystemResource;
+import com.example.demo.core.io.Resource;
 import com.example.demo.factory.config.BeanReference;
 import com.example.demo.factory.config.PropertyValues;
 import com.example.demo.factory.support.DefaultListableBeanFactory;
 import org.junit.jupiter.api.Test;
 import com.example.demo.factory.config.BeanDefinition;
+
+import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,5 +53,24 @@ class SpringMiniPracticeApplicationTests {
         assertThat(person.getName()).isEqualTo("derek");
         assertThat(person.getAge()).isEqualTo(18);
         assertThat(person.getCar().getBrand()).isEqualTo("mars");
+    }
+
+    @Test
+    void testResourceLoader() throws Exception{
+        DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+
+        Resource resource = resourceLoader.getResource("classpath:hello.txt");
+        try(InputStream inputStream = resource.getInputStream()) {
+            String content = IoUtil.readUtf8(inputStream);
+            assertThat(content).isEqualTo("hello world\r\n");
+        }
+
+        //加载文件系统资源
+        resource = resourceLoader.getResource("src/test/resources/hello.txt");
+        assertThat(resource instanceof FileSystemResource).isTrue();
+        try(InputStream inputStream = resource.getInputStream()) {
+            String content = IoUtil.readUtf8(inputStream);
+            assertThat(content).isEqualTo("hello world\r\n");
+        }
     }
 }
