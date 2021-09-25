@@ -17,7 +17,12 @@ public class DefaultListableBeanFactory
     }
 
     @Override
-    protected BeanDefinition getBeanDefinition(String beanName) throws BeansException {
+    public boolean containsBeanDefinition(String beanName) {
+        return beanDefinitionMap.containsKey(beanName);
+    }
+
+    @Override
+    public BeanDefinition getBeanDefinition(String beanName) throws BeansException {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
 
         if (beanDefinition == null){
