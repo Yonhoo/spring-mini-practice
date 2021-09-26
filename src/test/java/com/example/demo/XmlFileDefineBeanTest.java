@@ -1,8 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.factory.support.DefaultListableBeanFactory;
+import com.example.demo.factory.xml.XmlBeanDefinitionReader;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

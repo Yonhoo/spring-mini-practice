@@ -48,7 +48,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         Document document = XmlUtil.readXML(inputStream);
         Element root = document.getDocumentElement();
         NodeList childrenNodes = root.getChildNodes();
+        int hi = childrenNodes.getLength();
         for (int i = 0; i < childrenNodes.getLength(); i++) {
+            String temp = childrenNodes.item(i).getNodeName();
             if (childrenNodes.item(i) instanceof Element) {
                 if (BEAN_ELEMENT.equals(childrenNodes.item(i).getNodeName())) {
                     //解析bean标签
@@ -66,7 +68,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
                     //id优先于name
                     String beanName = StrUtil.isNotBlank(beanId) ? beanId : name;
-                    if (StrUtil.isNotBlank(beanName)) {
+                    if (StrUtil.isBlank(beanName)) {
                         //如果id和name都为空，将类名的第一个字母转为小写后作为bean的名称
                         beanName = StrUtil.lowerFirst(clazz.getSimpleName());
                     }
@@ -81,7 +83,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                             String valueAttribute = property.getAttribute(VALUE_ATTRIBUTE);
                             String refAttribute = property.getAttribute(REF_ATTRIBUTE);
 
-                            if (StrUtil.isNotBlank(nameAttribute)) {
+                            if (StrUtil.isBlank(nameAttribute)) {
                                 throw new BeansException("The name attribute cannot be null or empty");
                             }
 
