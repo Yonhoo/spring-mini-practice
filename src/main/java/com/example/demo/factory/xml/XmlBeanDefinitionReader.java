@@ -48,9 +48,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         Document document = XmlUtil.readXML(inputStream);
         Element root = document.getDocumentElement();
         NodeList childrenNodes = root.getChildNodes();
-        int hi = childrenNodes.getLength();
         for (int i = 0; i < childrenNodes.getLength(); i++) {
-            String temp = childrenNodes.item(i).getNodeName();
             if (childrenNodes.item(i) instanceof Element) {
                 if (BEAN_ELEMENT.equals(childrenNodes.item(i).getNodeName())) {
                     //解析bean标签
