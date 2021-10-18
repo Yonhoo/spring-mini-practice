@@ -109,5 +109,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         ResourceLoader resourceLoader = getResourceLoader();
         Resource resource = resourceLoader.getResource(location);
         loadBeanDefinitions(resource);
+
+        //TODO 这里加载环境配置文件
+        //TODO 主要是为了学习事件发布
     }
 }

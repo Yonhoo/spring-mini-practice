@@ -44,7 +44,7 @@ class SpringMiniPracticeApplicationTests {
         personPropertyValues.addPropertyValue("name", "derek");
         personPropertyValues.addPropertyValue("age", 18);
         BeanReference carBeanReference = new BeanReference("car");
-        personPropertyValues.addPropertyValue("car",carBeanReference);
+        personPropertyValues.addPropertyValue("car", carBeanReference);
         BeanDefinition beanDefinition = new BeanDefinition(Person.class, personPropertyValues);
         beanFactory.registerBeanDefinition("person", beanDefinition);
 
@@ -56,11 +56,11 @@ class SpringMiniPracticeApplicationTests {
     }
 
     @Test
-    void testResourceLoader() throws Exception{
+    void testResourceLoader() throws Exception {
         DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
 
         Resource resource = resourceLoader.getResource("classpath:hello.txt");
-        try(InputStream inputStream = resource.getInputStream()) {
+        try (InputStream inputStream = resource.getInputStream()) {
             String content = IoUtil.readUtf8(inputStream);
             assertThat(content).isEqualTo("hello world\r\n");
         }
@@ -68,7 +68,7 @@ class SpringMiniPracticeApplicationTests {
         //加载文件系统资源
         resource = resourceLoader.getResource("src/test/resources/hello.txt");
         assertThat(resource instanceof FileSystemResource).isTrue();
-        try(InputStream inputStream = resource.getInputStream()) {
+        try (InputStream inputStream = resource.getInputStream()) {
             String content = IoUtil.readUtf8(inputStream);
             assertThat(content).isEqualTo("hello world\r\n");
         }
