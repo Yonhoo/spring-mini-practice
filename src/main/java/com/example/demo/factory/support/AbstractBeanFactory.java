@@ -4,6 +4,7 @@ import com.example.demo.exception.BeansException;
 import com.example.demo.factory.config.BeanDefinition;
 import com.example.demo.factory.config.BeanPostProcessor;
 import com.example.demo.factory.config.ConfigurableBeanFactory;
+import org.springframework.core.ResolvableType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,11 @@ public abstract class AbstractBeanFactory
     @Override
     public <T> T getBean(String name,Class<T> requiredType) throws BeansException{
         return ((T) getBean(name));
+    }
+
+    @Override
+    public Object getBean(ResolvableType type) {
+        return null;
     }
 
     @Override

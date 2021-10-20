@@ -1,6 +1,7 @@
 package com.example.demo.factory;
 
 import com.example.demo.exception.BeansException;
+import org.springframework.core.ResolvableType;
 
 public interface BeanFactory {
     /**
@@ -11,6 +12,9 @@ public interface BeanFactory {
      * @throws BeansException bean不存在时
      */
     Object getBean(String name);
+
+
+    Object getBean(ResolvableType type);
 
     /**
      * 根据名称和类型查找bean
