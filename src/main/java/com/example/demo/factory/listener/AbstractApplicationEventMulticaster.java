@@ -28,7 +28,7 @@ public abstract class AbstractApplicationEventMulticaster implements Application
         }
     }
 
-    private ConfigurableBeanFactory getBeanFactory() {
+    public ConfigurableBeanFactory getBeanFactory() {
         if (this.beanFactory == null) {
             throw new IllegalStateException("ApplicationEventMulticaster cannot retrieve listener beans because it is not associated with a BeanFactory");
         } else {

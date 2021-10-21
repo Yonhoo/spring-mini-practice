@@ -17,6 +17,8 @@ public class EventPublishingRunListener implements SpringApplicationRunListener 
 
     @Override
     public void environmentPrepared(List<String> activeEnvironmentPath) {
-        this.initialMulticaster.multicastEvent(new ApplicationEnvironmentPreparedEvent(activeEnvironmentPath));
+        this.initialMulticaster.multicastEvent(
+                new ApplicationEnvironmentPreparedEvent(activeEnvironmentPath,
+                        this.initialMulticaster.getBeanFactory()));
     }
 }
