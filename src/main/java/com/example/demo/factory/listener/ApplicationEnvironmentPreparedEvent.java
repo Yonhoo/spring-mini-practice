@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ApplicationEnvironmentPreparedEvent implements ApplicationEvent {
     private final List<String> activeEnvironmentPath;
-    private final static String defaultPropertyPath = "classpath:application.properties";
+    private final static String defaultPropertyPath = "";
     private final ConfigurableBeanFactory beanFactory;
 
 
@@ -17,6 +17,8 @@ public class ApplicationEnvironmentPreparedEvent implements ApplicationEvent {
     }
 
     public List<String> getActiveEnvironmentPath(){
+
+        //TODO 添加path的时候是拼接的，这里的default就得单独弄了
         activeEnvironmentPath.add(defaultPropertyPath);
         return activeEnvironmentPath;
     }

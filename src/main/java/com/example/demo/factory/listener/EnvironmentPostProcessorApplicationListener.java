@@ -10,45 +10,51 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 
 @Slf4j
-public class EnvironmentPostProcessorApplicationListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent>{
+public class EnvironmentPostProcessorApplicationListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
+    private final static String defaultPrefix = "application";
+    private final static String defaultSuffix = ".properties";
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ApplicationEnvironmentPreparedEvent){
+        if (event instanceof ApplicationEnvironmentPreparedEvent) {
             this.onApplicationEnvironmentPreparedEvent((ApplicationEnvironmentPreparedEvent) event);
         }
     }
 
-    private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event){
+    private void onApplicationEnvironmentPreparedEvent(ApplicationEnvironmentPreparedEvent event) {
         List<String> activeEnvironmentPath = event.getActiveEnvironmentPath();
-        activeEnvironmentPath.forEach(path->{
+        activeEnvironmentPath.forEach(path -> {
             try {
-                Resource resource = new ClassPathResource(path);
+                Resource resource;
+                if (path.isEmpty()) {
+                    resource = new ClassPathResource(defaultPrefix + defaultSuffix);
+                } else {
+                    resource = new ClassPathResource(defaultPrefix + "-" + path + defaultSuffix);
+                }
                 Properties props = PropertiesLoaderUtils.loadProperties(resource);
                 ConfigurableBeanFactory beanFactory = event.getBeanFactory();
                 ResolvableType resolvableType = ResolvableType.forInstance(beanFactory);
                 ResolvableType parentType = ResolvableType.forClass(DefaultListableBeanFactory.class);
-                if (resolvableType.isAssignableFrom(parentType)){
-                    registerDefaultEnviromenBeanDefinition(props, (DefaultListableBeanFactory) beanFactory);
+                if (resolvableType.isAssignableFrom(parentType)) {
+                    registerDefaultEnvironmentBeanDefinition(props, (DefaultListableBeanFactory) beanFactory);
                 }
-            }catch (Exception e){
-                log.warn("this environmentPath isn't exist {}",path);
+            } catch (Exception e) {
+                log.warn("this environmentPath isn't exist {}", path);
             }
         });
 
 
     }
 
-    private void registerDefaultEnviromenBeanDefinition(Properties props, DefaultListableBeanFactory beanFactory) {
+    private void registerDefaultEnvironmentBeanDefinition(Properties props, DefaultListableBeanFactory beanFactory) {
         PropertyValues propertyValues = new PropertyValues();
-        propertyValues.addPropertyValue("properties", props);
-        BeanDefinition beanDefinition = new BeanDefinition(DefaultEnviroment.class,propertyValues);
-        beanFactory.registerBeanDefinition("enviroment",beanDefinition);
+        propertyValues.addPropertyValue("properties", List.of(props));
+        BeanDefinition beanDefinition = new BeanDefinition(DefaultEnvironment.class, propertyValues);
+        beanFactory.registerBeanDefinition("environment", beanDefinition);
+        log.info("register environmentBeanDefinition success");
     }
 }

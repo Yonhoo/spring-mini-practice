@@ -8,13 +8,17 @@ import com.example.demo.exception.BeansException;
 import com.example.demo.factory.config.BeanDefinition;
 import com.example.demo.factory.config.BeanDefinitionRegistry;
 import com.example.demo.factory.config.BeanReference;
+import com.example.demo.factory.listener.EnvironmentPostProcessorApplicationListener;
+import com.example.demo.factory.listener.EventPublishingRunListener;
 import com.example.demo.factory.support.AbstractBeanDefinitionReader;
+import com.example.demo.factory.support.DefaultListableBeanFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
@@ -93,12 +97,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                         }
                     }
 
-                    if (getRegistry().containsBeanDefinition(beanName)){
+                    if (getRegistry().containsBeanDefinition(beanName)) {
                         //beanName 不能重名
                         throw new BeansException("Duplicate beanName[" + beanName + "] is not allowed");
                     }
                     // 注册BeanDefinition
-                    getRegistry().registerBeanDefinition(beanName,beanDefinition);
+                    getRegistry().registerBeanDefinition(beanName, beanDefinition);
                 }
             }
         }
@@ -110,7 +114,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         Resource resource = resourceLoader.getResource(location);
         loadBeanDefinitions(resource);
 
-        //TODO 这里加载环境配置文件
+        //TODO 这里注册环境配置文件到beanFactory
         //TODO 主要是为了学习事件发布
+        EventPublishingRunListener publishingRunListener =
+                new EventPublishingRunListener(List.of(new EnvironmentPostProcessorApplicationListener()),
+                        (DefaultListableBeanFactory) this.getRegistry());
+        publishingRunListener.starting("initialMulticaster starting!!!\nloading environment !!!");
+        publishingRunListener.environmentPrepared(List.of("test"));
     }
 }

@@ -2,6 +2,7 @@ package com.example.demo.factory.listener;
 
 import com.example.demo.factory.BeanFactory;
 import com.example.demo.factory.config.ConfigurableBeanFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
@@ -11,6 +12,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 public abstract class AbstractApplicationEventMulticaster implements ApplicationEventMulticaster {
     private final Set<ApplicationListener<?>> defaultApplicationListeners = new HashSet<>();
 
@@ -21,10 +23,10 @@ public abstract class AbstractApplicationEventMulticaster implements Application
     }
 
     public AbstractApplicationEventMulticaster(BeanFactory factory) {
-        if (!(beanFactory instanceof ConfigurableBeanFactory)) {
+        if (!(factory instanceof ConfigurableBeanFactory)) {
             throw new IllegalStateException("Not running in a ConfigurableBeanFactory: " + beanFactory);
         } else {
-            this.beanFactory = (ConfigurableBeanFactory) beanFactory;
+            this.beanFactory = (ConfigurableBeanFactory) factory;
         }
     }
 
@@ -56,14 +58,21 @@ public abstract class AbstractApplicationEventMulticaster implements Application
 
         Iterator varIter = this.defaultApplicationListeners.iterator();
 
-        return this.defaultApplicationListeners.stream().filter(item->
-            this.supportsEvent(item,eventType)
+        return this.defaultApplicationListeners.stream().filter(item ->
+                this.supportsEvent(item, eventType)
         ).collect(Collectors.toSet());
     }
 
-    protected boolean supportsEvent(ApplicationListener<?> item, ResolvableType eventType){
-        ResolvableType declaredType = ResolvableType.forClass(item.getClass());
-        return declaredType == null || declaredType.getGeneric(0).isAssignableFrom(eventType);
+    protected boolean supportsEvent(ApplicationListener<?> item, ResolvableType eventType) {
+        ResolvableType declaredType = resolveDeclaredEventType(item.getClass());
+        log.info("declaredType : {} supportEvent eventType : {}",
+                declaredType.resolve() == null ? null : declaredType.resolve().getSimpleName(),
+                eventType.resolve().getSimpleName());
+        return declaredType == null || declaredType.getType().equals(eventType.getType());
+    }
+
+    private ResolvableType resolveDeclaredEventType(Class<?> listenerType) {
+        return ResolvableType.forClass(listenerType).as(ApplicationListener.class).getGeneric(new int[0]);
     }
 
 }

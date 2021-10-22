@@ -27,7 +27,7 @@ implements AutowireCapableBeanFactory {
             //执行bean的初始化方法和BeanPostProcessor的前置和后置处理方法
             initializeBean(beanName,bean,beanDefinition);
         } catch (Exception e) {
-            throw new BeansException("Instantiation of bean failed", e);
+            throw new BeansException("Instantiation of bean failed " + e.getMessage());
         }
 
         addSingleton(beanName, bean);
@@ -86,7 +86,7 @@ implements AutowireCapableBeanFactory {
      */
     protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) {
         //TODO 后面会实现
-        System.out.println("执行bean[" + beanName + "]的初始化方法");
+        System.out.println("invokeInitMethods : 执行bean [" + beanName + "] 的初始化方法");
     }
 
     @Override
