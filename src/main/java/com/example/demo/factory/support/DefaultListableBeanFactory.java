@@ -42,12 +42,12 @@ public class DefaultListableBeanFactory
     }
 
     @Override
-    public void preInstantiateSingletons() throws org.springframework.beans.BeansException {
+    public void preInstantiateSingletons() throws BeansException {
         beanDefinitionMap.keySet().forEach(this::getBean);
     }
 
     @Override
-    public <T> Map<String, T> getBeansOfType(Class<T> type) throws org.springframework.beans.BeansException {
+    public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
         Map<String, T> result = new HashMap<>();
         beanDefinitionMap.forEach((beanName,beanDefinition)->{
             Class beanClass = beanDefinition.getBeanClass();
