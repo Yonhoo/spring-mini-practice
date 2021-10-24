@@ -68,7 +68,8 @@ public abstract class AbstractApplicationEventMulticaster implements Application
         log.info("declaredType : {} supportEvent eventType : {}",
                 declaredType.resolve() == null ? null : declaredType.resolve().getSimpleName(),
                 eventType.resolve().getSimpleName());
-        return declaredType == null || declaredType.getType().equals(eventType.getType());
+        return declaredType == null || declaredType.getType().equals(eventType.getType())
+                 || declaredType.isAssignableFrom(eventType);
     }
 
     private ResolvableType resolveDeclaredEventType(Class<?> listenerType) {
