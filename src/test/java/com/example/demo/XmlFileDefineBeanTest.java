@@ -16,12 +16,10 @@ public class XmlFileDefineBeanTest {
         beanDefinitionReader.loadBeanDefinitions("classpath:spring.xml");
 
         Person person = (Person) beanFactory.getBean("person");
-        System.out.println(person);
         assertThat(person.getName()).isEqualTo("derek");
         assertThat(person.getCar().getBrand()).isEqualTo("porsche");
 
         Car car = (Car) beanFactory.getBean("car");
-        System.out.println(car);
         assertThat(car.getBrand()).isEqualTo("porsche");
     }
 
@@ -36,7 +34,6 @@ public class XmlFileDefineBeanTest {
         beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
 
         Person person = (Person) beanFactory.getBean("person");
-        System.out.println(person);
         //name属性在CustomBeanFactoryPostProcessor中被修改为ivy
         assertThat(person.getName()).isEqualTo("ivy");
     }

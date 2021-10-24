@@ -42,7 +42,7 @@ public class DefaultListableBeanFactory
     }
 
     @Override
-    public void preInstantiateSingletons() throws org.springframework.beans.BeansException {
+    public void preInstantiateSingletons() throws BeansException {
         beanDefinitionMap.keySet().forEach(this::getBean);
     }
 

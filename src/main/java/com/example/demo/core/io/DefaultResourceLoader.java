@@ -5,9 +5,7 @@ import java.net.URL;
 
 public class DefaultResourceLoader implements ResourceLoader{
 
-
     public static final String CLASSPATH_URL_PREFIX = "classpath:";
-
 
     @Override
     public Resource getResource(String location) {
