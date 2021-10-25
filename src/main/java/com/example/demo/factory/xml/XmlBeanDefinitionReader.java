@@ -113,13 +113,5 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         ResourceLoader resourceLoader = getResourceLoader();
         Resource resource = resourceLoader.getResource(location);
         loadBeanDefinitions(resource);
-
-        //TODO 这里注册环境配置文件到beanFactory
-        //TODO 主要是为了学习事件发布
-        EventPublishingRunListener publishingRunListener =
-                new EventPublishingRunListener(List.of(new EnvironmentPostProcessorApplicationListener()),
-                        (DefaultListableBeanFactory) this.getRegistry());
-        publishingRunListener.starting("initialMulticaster starting!!!\nloading environment !!!");
-        publishingRunListener.environmentPrepared(List.of("test"));
     }
 }

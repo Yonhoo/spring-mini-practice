@@ -13,9 +13,6 @@ public interface BeanFactory {
      */
     Object getBean(String name);
 
-
-    Object getBean(ResolvableType type);
-
     /**
      * 根据名称和类型查找bean
      *

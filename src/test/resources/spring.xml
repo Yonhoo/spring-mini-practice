@@ -16,4 +16,7 @@
         <property name="brand" value="porsche"/>
     </bean>
 
+    <bean class="com.example.demo.common.CustomBeanFactoryPostProcessor"/>
+
+    <bean class="com.example.demo.common.CustomerBeanPostProcessor"/>
 </beans>

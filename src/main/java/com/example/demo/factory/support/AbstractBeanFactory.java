@@ -32,11 +32,6 @@ public abstract class AbstractBeanFactory
     }
 
     @Override
-    public Object getBean(ResolvableType type) {
-        return null;
-    }
-
-    @Override
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         //有则覆盖
         this.beanPostProcessors.remove(beanPostProcessor);

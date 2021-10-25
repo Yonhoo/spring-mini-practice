@@ -10,8 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
-import java.util.List;
-import java.util.Properties;
+import java.io.IOException;
+import java.util.*;
 
 @Slf4j
 public class EnvironmentPostProcessorApplicationListener implements ApplicationListener<ApplicationEnvironmentPreparedEvent> {
@@ -35,13 +35,7 @@ public class EnvironmentPostProcessorApplicationListener implements ApplicationL
                 } else {
                     resource = new ClassPathResource(defaultPrefix + "-" + path + defaultSuffix);
                 }
-                Properties props = PropertiesLoaderUtils.loadProperties(resource);
-                ConfigurableBeanFactory beanFactory = event.getBeanFactory();
-                ResolvableType resolvableType = ResolvableType.forInstance(beanFactory);
-                ResolvableType parentType = ResolvableType.forClass(DefaultListableBeanFactory.class);
-                if (resolvableType.isAssignableFrom(parentType)) {
-                    registerDefaultEnvironmentBeanDefinition(props, (DefaultListableBeanFactory) beanFactory);
-                }
+                registerEnvironmentBean(event, resource);
             } catch (Exception e) {
                 log.warn("this environmentPath isn't exist {}", path);
             }
@@ -50,11 +44,31 @@ public class EnvironmentPostProcessorApplicationListener implements ApplicationL
 
     }
 
+    private void registerEnvironmentBean(ApplicationEnvironmentPreparedEvent event, Resource resource) throws IOException {
+        Properties props = PropertiesLoaderUtils.loadProperties(resource);
+        ConfigurableBeanFactory beanFactory = event.getBeanFactory();
+        ResolvableType resolvableType = ResolvableType.forInstance(beanFactory);
+        ResolvableType parentType = ResolvableType.forClass(DefaultListableBeanFactory.class);
+        if (resolvableType.isAssignableFrom(parentType)) {
+            registerDefaultEnvironmentBeanDefinition(props, (DefaultListableBeanFactory) beanFactory);
+        }
+    }
+
     private void registerDefaultEnvironmentBeanDefinition(Properties props, DefaultListableBeanFactory beanFactory) {
-        PropertyValues propertyValues = new PropertyValues();
-        propertyValues.addPropertyValue("properties", List.of(props));
-        BeanDefinition beanDefinition = new BeanDefinition(DefaultEnvironment.class, propertyValues);
-        beanFactory.registerBeanDefinition("environment", beanDefinition);
+        if (!beanFactory.containsBeanDefinition("environment")) {
+            PropertyValues propertyValues = new PropertyValues();
+            ArrayList<Properties> propList = new ArrayList<>();
+            propList.add(props);
+            propertyValues.addPropertyValue("properties", propList);
+            BeanDefinition beanDefinition = new BeanDefinition(DefaultEnvironment.class, propertyValues);
+            beanFactory.registerBeanDefinition("environment", beanDefinition);
+        } else {
+            BeanDefinition environmentBean = beanFactory
+                    .getBeanDefinition("environment");
+            ArrayList<Properties> properties = (ArrayList<Properties>) environmentBean
+                    .getPropertyValues().getPropertyValue("properties");
+            properties.add(props);
+        }
         log.info("register environmentBeanDefinition success");
     }
 }

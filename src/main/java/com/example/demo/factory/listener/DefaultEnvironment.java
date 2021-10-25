@@ -7,20 +7,28 @@ public class DefaultEnvironment implements Environment {
 
     private List<Properties> properties;
 
-    public void setProperties(List<Properties> properties){
+    public void setProperties(List<Properties> properties) {
         this.properties = properties;
     }
 
-    public DefaultEnvironment() {}
+    public DefaultEnvironment() {
+    }
 
     @Override
     public String getProperties(String key) {
-        for (var property: this.properties) {
+        for (var property : this.properties) {
             String value = property.getProperty(key);
-            if (!value.isEmpty()){
+            if (value != null) {
                 return value;
             }
         }
         throw new IllegalArgumentException("no this properties!!!");
+    }
+
+    @Override
+    public void addProperties(Properties props) {
+        if (this.properties != null) {
+            this.addProperties(props);
+        }
     }
 }
