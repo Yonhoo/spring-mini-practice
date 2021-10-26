@@ -1,6 +1,8 @@
 package com.example.demo.factory.support;
 
+import cn.hutool.core.util.StrUtil;
 import com.example.demo.exception.BeansException;
+import com.example.demo.factory.DisposableBean;
 import com.example.demo.factory.config.*;
 import cn.hutool.core.bean.BeanUtil;
 import java.util.Arrays;
@@ -30,8 +32,26 @@ implements AutowireCapableBeanFactory {
             throw new BeansException("Instantiation of bean failed", e);
         }
 
+        // 在每次创建bean的时候，注册有销毁方法的bean
+        registerDisposableBeanIfNessary(beanName,bean,beanDefinition);
         addSingleton(beanName, bean);
         return bean;
+    }
+
+    /**
+     * 注册有销毁方法的bean，即bean继承自DisposableBean或有自定义的销毁方法
+     * 为这个bean定义一个销毁的适配器，如果继承自DisposableBean,则默认执行
+     * DisposableBean的destory方法，如果有自定义的destory方法，那么适配器也会执行
+     * 自定义的销毁方法
+     * @param beanName
+     * @param bean
+     * @param beanDefinition
+     */
+    protected void registerDisposableBeanIfNessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+          if (bean instanceof DisposableBean || StrUtil.isNotBlank(
+                  beanDefinition.getDestoryMethodName())){
+              registerDisposableBean(beanName,new DisposableBeanAdapter(bean,beanName,beanDefinition));
+          }
     }
 
     protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {

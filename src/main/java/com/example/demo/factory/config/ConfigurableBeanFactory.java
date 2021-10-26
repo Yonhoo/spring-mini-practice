@@ -7,4 +7,11 @@ public interface ConfigurableBeanFactory extends BeanFactory,SingletonBeanRegist
      * @param beanPostProcessor
      */
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /*
+    *
+    * 销毁单例bean
+    *
+    * */
+    void destroySingletons();
 }
