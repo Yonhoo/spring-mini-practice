@@ -5,6 +5,7 @@ import com.example.demo.exception.BeansException;
 import com.example.demo.factory.ConfigurableListableBeanFactory;
 import com.example.demo.factory.config.BeanFactoryPostProcessor;
 import com.example.demo.factory.config.BeanPostProcessor;
+import com.example.demo.factory.support.ApplicationContextAwareProcessor;
 
 import java.util.Map;
 
@@ -15,6 +16,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
         //创建BeanFactory,并加载BeanDefinition
         refreshBeanFactory();
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+        // 添加ApplicationContextAwareProcessor，让ApplicationContextAware感知到
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
         // 在bean实例化之前，执行BeanFactoryPostProcessor
         invokeBeanFactoryPostProcessors(beanFactory);

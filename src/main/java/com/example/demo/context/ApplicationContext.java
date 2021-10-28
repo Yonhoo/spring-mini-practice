@@ -4,7 +4,7 @@ import com.example.demo.core.io.ResourceLoader;
 import com.example.demo.factory.BeanFactory;
 import com.example.demo.factory.ListableBeanFactory;
 
-public interface ApplicaitonContext extends ListableBeanFactory, BeanFactory,
+public interface ApplicationContext extends ListableBeanFactory, BeanFactory,
         ResourceLoader {
 
 }

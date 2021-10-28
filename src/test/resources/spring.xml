@@ -19,4 +19,7 @@
     <bean class="com.example.demo.common.CustomBeanFactoryPostProcessor"/>
 
     <bean class="com.example.demo.common.CustomerBeanPostProcessor"/>
+
+
+    <bean id="helloService" class="com.example.demo.HelloService"/>
 </beans>
