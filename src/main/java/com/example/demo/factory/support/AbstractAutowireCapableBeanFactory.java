@@ -3,6 +3,7 @@ package com.example.demo.factory.support;
 import cn.hutool.core.util.ClassUtil;
 import cn.hutool.core.util.StrUtil;
 import com.example.demo.exception.BeansException;
+import com.example.demo.factory.BeanFactoryAware;
 import com.example.demo.factory.DisposableBean;
 import com.example.demo.factory.InitializingBean;
 import com.example.demo.factory.config.*;
@@ -61,6 +62,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // 初始化时，感知是否有beanFactoryAware
+        if (bean instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) bean).setBeanFactory(this);
+        }
+
         //执行BeanPostProcessor的前置处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
 
@@ -119,16 +125,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws InvocationTargetException, IllegalAccessException {
         //TODO 后面会实现
         System.out.println("执行bean[" + beanName + "]的初始化方法");
-        if (bean instanceof InitializingBean){
-            ((InitializingBean)bean).afterPropertiesSet();
+        if (bean instanceof InitializingBean) {
+            ((InitializingBean) bean).afterPropertiesSet();
         }
 
         String initMethodName = beanDefinition.getInitMethodName();
-        if (StrUtil.isNotBlank(initMethodName)){
+        if (StrUtil.isNotBlank(initMethodName)) {
             Method initMethod = ClassUtil.getPublicMethod(
-                    beanDefinition.getBeanClass(),initMethodName);
-            if (initMethod == null){
-                throw new BeansException("could not find an init method name:"+
+                    beanDefinition.getBeanClass(), initMethodName);
+            if (initMethod == null) {
+                throw new BeansException("could not find an init method name:" +
                         initMethodName);
             }
             initMethod.invoke(bean);
