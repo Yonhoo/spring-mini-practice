@@ -11,12 +11,12 @@ import java.util.Set;
 
 public class DefaultListableBeanFactory
         extends AbstractAutowireCapableBeanFactory
-        implements ConfigurableListableBeanFactory,BeanDefinitionRegistry {
-    private Map<String,BeanDefinition> beanDefinitionMap = new HashMap<>();
+        implements ConfigurableListableBeanFactory, BeanDefinitionRegistry {
+    private Map<String, BeanDefinition> beanDefinitionMap = new HashMap<>();
 
     @Override
     public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
-        beanDefinitionMap.put(beanName,beanDefinition);
+        beanDefinitionMap.put(beanName, beanDefinition);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class DefaultListableBeanFactory
     }
 
     @Override
-    public String[] getBeanDefinitionNames(){
+    public String[] getBeanDefinitionNames() {
         Set<String> beanNames = beanDefinitionMap.keySet();
         return beanNames.toArray(new String[beanNames.size()]);
     }
@@ -34,7 +34,7 @@ public class DefaultListableBeanFactory
     public BeanDefinition getBeanDefinition(String beanName) throws BeansException {
         BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
 
-        if (beanDefinition == null){
+        if (beanDefinition == null) {
             throw new BeansException("No bean named '" + beanName + "' is defined");
         }
 
@@ -43,17 +43,21 @@ public class DefaultListableBeanFactory
 
     @Override
     public void preInstantiateSingletons() throws BeansException {
-        beanDefinitionMap.keySet().forEach(this::getBean);
+        beanDefinitionMap.forEach((beanName, beanDefinition) -> {
+            if (beanDefinition.isSingleton()) {
+                getBean(beanName);
+            }
+        });
     }
 
     @Override
     public <T> Map<String, T> getBeansOfType(Class<T> type) throws BeansException {
         Map<String, T> result = new HashMap<>();
-        beanDefinitionMap.forEach((beanName,beanDefinition)->{
+        beanDefinitionMap.forEach((beanName, beanDefinition) -> {
             Class beanClass = beanDefinition.getBeanClass();
-            if (type.isAssignableFrom(beanClass)){
+            if (type.isAssignableFrom(beanClass)) {
                 T bean = (T) getBean(beanName);
-                result.put(beanName,bean);
+                result.put(beanName, bean);
             }
         });
         return result;

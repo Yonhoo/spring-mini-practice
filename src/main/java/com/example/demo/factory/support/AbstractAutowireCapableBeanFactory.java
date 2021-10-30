@@ -40,14 +40,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         // 在每次创建bean的时候，注册有销毁方法的bean
         registerDisposableBeanIfNessary(beanName, bean, beanDefinition);
-        addSingleton(beanName, bean);
+
+        if (beanDefinition.isSingleton()){
+            addSingleton(beanName, bean);
+        }
         return bean;
     }
 
     /**
      * 注册有销毁方法的bean，即bean继承自DisposableBean或有自定义的销毁方法
      * 为这个bean定义一个销毁的适配器，如果继承自DisposableBean,则默认执行
-     * DisposableBean的destory方法，如果有自定义的destory方法，那么适配器也会执行
+     * DisposableBean的destory方法，如果有自定义的destroy方法，那么适配器也会执行
      * 自定义的销毁方法
      *
      * @param beanName
@@ -55,10 +58,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @param beanDefinition
      */
     protected void registerDisposableBeanIfNessary(String beanName, Object bean, BeanDefinition beanDefinition) {
-        if (bean instanceof DisposableBean || StrUtil.isNotBlank(
-                beanDefinition.getDestoryMethodName())) {
-            registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, beanDefinition));
+        // prototype作用域部署的bean，每一次请求（将其注入到另一个bean中，
+        // 或者以程序的方式调用容器的getBean()方法）都会产生一个新的bean实例，
+        // 相当与一个new的操作，对于prototype作用域的bean，
+        // 有一点非常重要，那就是Spring不能对一个prototype bean的整个生命周期负责，
+        // 容器在初始化、配置、装饰或者是装配完一个prototype实例后，将它交给客户端，
+        // 随后就对该prototype实例不闻不问了
+        if (beanDefinition.isSingleton()){
+            if (bean instanceof DisposableBean || StrUtil.isNotBlank(
+                    beanDefinition.getDestroyMethodName())) {
+                registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, beanDefinition));
+            }
         }
+
     }
 
     protected Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
